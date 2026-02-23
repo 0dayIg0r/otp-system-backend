@@ -10,3 +10,5 @@ mainRouter.get("/ping", pingController.ping)
 mainRouter.post('/auth/signin', authController.signIn)
 
 mainRouter.post('/auth/signup', authController.signUp)
+
+mainRouter.post('/auth/verify', authController.verifyOTP)
