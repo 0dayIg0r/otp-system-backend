@@ -5,6 +5,7 @@ import { generateOTP, validateOTP } from "../../services/otp/otp"
 import { sendEmail } from "../../libs/mailtrap"
 import { authSignUpSchema } from "../../schemas/auth-signup"
 import { authVerifyOTPSchema } from "../../schemas/auth-otp"
+import { createJWT } from "../../libs/jwt"
 
 export const signIn: RequestHandler = async (req, res) => {
   const data = authSignInSchema.safeParse(req.body)
@@ -73,4 +74,8 @@ export const verifyOTP: RequestHandler = async (req, res) => {
     res.status(400).json({ error: "Código inválido ou expirado" })
     return
   }
+
+  const token = createJWT(user.id)
+
+  res.json({ token, user })
 }
