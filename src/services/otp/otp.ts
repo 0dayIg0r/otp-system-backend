@@ -1,6 +1,6 @@
 import { prisma } from "../../libs/prisma"
 
-export const generateOTP = async (userId: number) => {
+export const generateOTP = async (userId: number, email: string) => {
   let otpArray: number[] = []
 
   for (let q = 0; q < 6; q++) {
@@ -9,14 +9,16 @@ export const generateOTP = async (userId: number) => {
 
   let code = otpArray.join(" ")
 
-  let expiresIn = new Date()
-  expiresIn.setMinutes(expiresIn.getMinutes() + 30)
+  let expiresAt = new Date()
+  expiresAt.setMinutes(expiresAt.getMinutes() + 30)
 
   const otp = await prisma.otp.create({
     data: {
       code,
-      expiresIn,
-      userId,
+      email,
+      expiresAt,
+      userId
+ 
     },
   })
 
