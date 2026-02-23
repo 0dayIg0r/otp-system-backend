@@ -60,14 +60,15 @@ export const signUp: RequestHandler = async (req, res) => {
 export const verifyOTP: RequestHandler = async (req, res) => {
   const data = authVerifyOTPSchema.safeParse(req.body)
 
-  if (!data.success) {
-    res.status(400).json({
-      error: "Preencha todos os campos corretamente, OTP",
-      details: data.error,
-    })
+if (!data.success) {
+  const firstIssue = data.error.issues[0];
 
-    return
-  }
+  return res.status(400).json({
+    error: firstIssue?.message ?? "Dados inválidos",
+    code: firstIssue?.code,
+    path: firstIssue?.path,
+  });
+}
 
   const user = await validateOTP(data.data.id, data.data.code)
 
