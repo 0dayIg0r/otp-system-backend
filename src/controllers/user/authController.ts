@@ -3,8 +3,8 @@ import { authSignInSchema } from "../../schemas/auth-signin"
 import { createUser, getUserByEmail } from "../../services/user/userService"
 import { generateOTP } from "../../services/otp/otp"
 import { sendEmail } from "../../libs/mailtrap"
-import { create } from "node:domain"
 import { authSignUpSchema } from "../../schemas/auth-signup"
+import { z } from "zod"
 
 export const signIn: RequestHandler = async (req, res) => {
   const data = authSignInSchema.safeParse(req.body)
@@ -39,16 +39,20 @@ export const signIn: RequestHandler = async (req, res) => {
 export const signUp: RequestHandler = async (req, res) => {
   const data = authSignUpSchema.safeParse(req.body)
 
-  if (!data.success) {
-    res.json({ error: data.error.flatten().fieldErrors })
 
+
+  if (!data.success) {
+    const flattened = z.flattenError(data.error)
+
+    res.status(400).json({
+      error: "Preencha todos os campos corretamente",
+    })
     return
   }
-
   //lembrar de componentizar a busca do usuário por email, para não repetir o código
   const user = await getUserByEmail(data.data.email)
 
-  if (!user) {
+  if (user) {
     res.status(409).json({ error: "Este e-mail já está cadastrado." })
     return
   }
