@@ -4,7 +4,6 @@ import { createUser, getUserByEmail } from "../../services/user/userService"
 import { generateOTP } from "../../services/otp/otp"
 import { sendEmail } from "../../libs/mailtrap"
 import { authSignUpSchema } from "../../schemas/auth-signup"
-import { z } from "zod"
 
 export const signIn: RequestHandler = async (req, res) => {
   const data = authSignInSchema.safeParse(req.body)
@@ -22,9 +21,7 @@ export const signIn: RequestHandler = async (req, res) => {
     return
   }
 
-  const id = Number(user.id)
-
-  const otp = await generateOTP(id)
+  const otp = await generateOTP(user.id, user.email)
 
   await sendEmail(
     user.email,
@@ -39,11 +36,7 @@ export const signIn: RequestHandler = async (req, res) => {
 export const signUp: RequestHandler = async (req, res) => {
   const data = authSignUpSchema.safeParse(req.body)
 
-
-
   if (!data.success) {
-    const flattened = z.flattenError(data.error)
-
     res.status(400).json({
       error: "Preencha todos os campos corretamente",
     })
