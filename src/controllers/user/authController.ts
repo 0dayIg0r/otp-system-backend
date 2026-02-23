@@ -1,11 +1,16 @@
 import { RequestHandler } from "express"
 import { authSignInSchema } from "../../schemas/auth-signin"
-import { createUser, getUserByEmail } from "../../services/user/userService"
+import {
+  createUser,
+  getUserByEmail,
+  getUserById,
+} from "../../services/user/userService"
 import { generateOTP, validateOTP } from "../../services/otp/otp"
 import { sendEmail } from "../../libs/mailtrap"
 import { authSignUpSchema } from "../../schemas/auth-signup"
 import { authVerifyOTPSchema } from "../../schemas/auth-otp"
 import { createJWT } from "../../libs/jwt"
+import { ExtendedRequest } from "../../types/extended-request"
 
 export const signIn: RequestHandler = async (req, res) => {
   const data = authSignInSchema.safeParse(req.body)
@@ -60,15 +65,15 @@ export const signUp: RequestHandler = async (req, res) => {
 export const verifyOTP: RequestHandler = async (req, res) => {
   const data = authVerifyOTPSchema.safeParse(req.body)
 
-if (!data.success) {
-  const firstIssue = data.error.issues[0];
+  if (!data.success) {
+    const firstIssue = data.error.issues[0]
 
-  return res.status(400).json({
-    error: firstIssue?.message ?? "Dados inválidos",
-    code: firstIssue?.code,
-    path: firstIssue?.path,
-  });
-}
+    return res.status(400).json({
+      error: firstIssue?.message ?? "Dados inválidos",
+      code: firstIssue?.code,
+      path: firstIssue?.path,
+    })
+  }
 
   const user = await validateOTP(data.data.id, data.data.code)
 
@@ -80,4 +85,19 @@ if (!data.success) {
   const token = createJWT(user.id)
 
   res.json({ token, user })
+}
+
+export const test: RequestHandler = async (req: ExtendedRequest, res) => {
+  if (!req.userId) {
+    return res.status(401).json({ error: "Acesso não autorizado" })
+  }
+  res.json({ userId: req.userId })
+
+  const user = await getUserById(req.userId)
+
+  if (!user) {
+    return res.status(401).json({ error: "Acesso não autorizado" })
+  }
+
+  res.json({ user })
 }
