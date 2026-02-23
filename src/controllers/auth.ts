@@ -2,6 +2,7 @@ import { RequestHandler } from "express"
 import { authSignInSchema } from "../schemas/auth-signin"
 import { getUserByEmail } from "../services/user/user"
 import { generateOTP } from "../services/otp/otp"
+import { sendEmail } from "../libs/mailtrap"
 
 export const signIn: RequestHandler = async (req, res) => {
   const data = authSignInSchema.safeParse(req.body)
@@ -20,6 +21,12 @@ export const signIn: RequestHandler = async (req, res) => {
   }
 
   const otp = await generateOTP(user.id)
+
+  await sendEmail(
+    user.email,
+    "Seu código de acesso",
+    `Olá! Seu código de acesso é: ${otp.code}. Ele é válido por 30 minutos.`
+  )
 
   res.json({ id: otp.id })
 }
