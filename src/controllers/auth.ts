@@ -21,5 +21,5 @@ export const signIn: RequestHandler = async (req, res) => {
 
   const otp = await generateOTP(user.id)
 
-  res.json({ message: "OTP enviado para o e-mail cadastrado" })
+  res.json({ id: otp.id })
 }
