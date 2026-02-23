@@ -7,7 +7,7 @@ export const generateOTP = async (userId: number, email: string) => {
     otpArray.push(Math.floor(Math.random() * 9))
   }
 
-  let code = otpArray.join(" ")
+  let code = otpArray.join("")
 
   let expiresAt = new Date()
   expiresAt.setMinutes(expiresAt.getMinutes() + 30)
@@ -49,6 +49,7 @@ export const validateOTP = async (id: number, code: string) => {
         used: true,
       },
     })
+    
 
     return otp.user
   }

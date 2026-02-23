@@ -62,15 +62,16 @@ export const verifyOTP: RequestHandler = async (req, res) => {
 
   if (!data.success) {
     res.status(400).json({
-      error: "Preencha todos os campos corretamente",
+      error: "Preencha todos os campos corretamente, OTP",
+      details: data.error,
     })
+
     return
   }
 
-
   const user = await validateOTP(data.data.id, data.data.code)
 
-  if(!user) {
+  if (!user) {
     res.status(400).json({ error: "Código inválido ou expirado" })
     return
   }
