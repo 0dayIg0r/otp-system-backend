@@ -1,12 +1,9 @@
 import { RequestHandler } from "express"
 import { authSignInSchema } from "../../schemas/auth-signin"
-import {
-  getUserByEmail,
-} from "../../services/user/getUserByEmailService.ts"
+import { getUserByEmail } from "../../services/user/getUserByEmailService.ts"
 
 import { sendEmail } from "../../libs/mailtrap"
 import { generateOTP } from "../../services/otp/generateOtpService.ts"
-
 
 export const signIn: RequestHandler = async (req, res) => {
   const data = authSignInSchema.safeParse(req.body)
@@ -35,11 +32,6 @@ export const signIn: RequestHandler = async (req, res) => {
   res.json({ id: otp.id })
 }
 
-
-
-
-
 export function signUp(arg0: string, signUp: any) {
-    throw new Error("Function not implemented.")
+  throw new Error("Function not implemented.")
 }
-
