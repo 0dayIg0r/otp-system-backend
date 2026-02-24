@@ -16,6 +16,11 @@ export const getUserById = async (id: number) => {
     where: {
       id,
     },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+    },
   })
 
   return user

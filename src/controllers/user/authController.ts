@@ -5,7 +5,7 @@ import {
   getUserByEmail,
   getUserById,
 } from "../../services/user/userService"
-import { generateOTP, validateOTP } from "../../services/otp/otp"
+import { generateOTP, validateOTP } from "../../services/otp/generateOtpServicets"
 import { sendEmail } from "../../libs/mailtrap"
 import { authSignUpSchema } from "../../schemas/auth-signup"
 import { authVerifyOTPSchema } from "../../schemas/auth-otp"

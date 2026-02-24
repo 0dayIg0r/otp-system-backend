@@ -3,7 +3,7 @@ import { ExtendedRequest } from "../types/extended-request"
 import { NextFunction, Response } from "express"
 
 export const createJWT = (id: number) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET as string, { expiresIn: "1h" })
+  return jwt.sign({ id }, process.env.JWT_SECRET as string, { expiresIn: "7d" })
 }
 
 export const verifyJWT = async (
