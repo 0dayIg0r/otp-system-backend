@@ -1,6 +1,7 @@
 import { RequestHandler } from "express"
 import { ExtendedRequest } from "../../types/extended-request"
-import { getUserById } from "../../services/user/getUserByIdService"
+import { getUserById } from "../../services/user/getUserService"
+
 
 export const privateRouter: RequestHandler = async (
   req: ExtendedRequest,

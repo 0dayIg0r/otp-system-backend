@@ -1,6 +1,6 @@
 import { RequestHandler } from "express"
 import { authSignInSchema } from "../../schemas/auth-signin"
-import { getUserByEmail } from "../../services/user/getUserByEmailService.ts"
+import { getUserByEmail } from "../../services/user/getUserService.ts"
 
 import { sendEmail } from "../../libs/mailtrap"
 import { generateOTP } from "../../services/otp/generateOtpService.ts"
