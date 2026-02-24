@@ -4,7 +4,7 @@ export const generateOTP = async (userId: number, email: string) => {
   let otpArray: number[] = []
 
   for (let q = 0; q < 6; q++) {
-    otpArray.push(Math.floor(Math.random() * 9))
+    otpArray.push(Math.floor(Math.random() * 10))
   }
 
   let code = otpArray.join("")
@@ -12,14 +12,20 @@ export const generateOTP = async (userId: number, email: string) => {
   let expiresAt = new Date()
   expiresAt.setMinutes(expiresAt.getMinutes() + 30)
 
-  const otp = await prisma.otp.create({
-    data: {
-      code,
-      email,
-      expiresAt,
-      userId,
-    },
-  })
+  const [, otp] = await prisma.$transaction([
+    prisma.otp.updateMany({
+      where: { userId, used: false },
+      data: { used: true },
+    }),
+    prisma.otp.create({
+      data: {
+        code,
+        email,
+        expiresAt,
+        userId,
+      },
+    }),
+  ])
 
   return otp
 }
