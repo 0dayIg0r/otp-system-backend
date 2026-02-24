@@ -23,4 +23,3 @@ export const generateOTP = async (userId: number, email: string) => {
 
   return otp
 }
-
