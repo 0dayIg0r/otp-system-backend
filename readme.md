@@ -1,131 +1,106 @@
-# 🔐 OTP Auth API (Node + Express + Prisma + Postgres)
+# OTP Auth API
 
-API em **Node.js/TypeScript** com autenticação via **OTP (One-Time Password)** e emissão de **JWT** para acesso a **rotas privadas**.
+API em Node.js/TypeScript para autenticação por **OTP** (código via e-mail) e emissão de **JWT** para acesso a rotas privadas.
 
----
-
-## ✨ Features
-
-- ✅ Cadastro de usuário (sign up)
-- ✅ Login via e-mail (sign in) com envio de **OTP**
-- ✅ Verificação do OTP e geração de **JWT**
-- ✅ Middleware de autenticação para **rotas privadas**
-- ✅ Validação de payloads com **Zod**
-- ✅ Persistência com **Prisma + PostgreSQL**
-- ✅ Segurança básica com **Helmet** e **CORS**
+![Node](https://img.shields.io/badge/node-%3E%3D18-3C873A)
+![TypeScript](https://img.shields.io/badge/typescript-5.x-3178C6)
+![Express](https://img.shields.io/badge/express-5.x-000000)
+![Prisma](https://img.shields.io/badge/prisma-7.x-2D3748)
+![Postgres](https://img.shields.io/badge/postgresql-14%2B-336791)
 
 ---
 
-## 🧰 Stack / Tecnologias
+## O que esse projeto faz
 
-- **Node.js + TypeScript**
-- **Express**
-- **Prisma ORM**
-- **PostgreSQL** (`pg` + `@prisma/adapter-pg`)
-- **JWT** (`jsonwebtoken`)
-- **Zod** (validação)
-- **Mailtrap** (envio de e-mails)
-- **uuid**
-- **helmet / cors**
-- **tsx / nodemon** (dev)
+- Cadastro de usuário
+- Login com OTP enviado por e-mail
+- Validação do OTP e geração de token JWT
+- Middleware de autenticação para rotas privadas
+- Validação de payload com Zod
+- Persistência com Prisma + PostgreSQL
 
 ---
 
-## 📁 Estrutura do Projeto (resumo)
+## Stack
+
+- Node.js + TypeScript
+- Express
+- Prisma + PostgreSQL
+- Zod
+- jsonwebtoken
+- Mailtrap (envio de e-mail)
+- helmet + cors
+
+---
+
+## Estrutura (resumo)
 
 ```
 src/
   controllers/
     auth/
-      signInController.ts
-      signUpController.ts
-      verifyOTPController.ts
     privateRoute/
-      privateRouterController.ts
-  libs/
-    jwt.ts
-    mailtrap.ts
-    prisma.ts
-  routers/
-    main.ts
-  schemas/
-    auth-otp.ts
-    auth-signin.ts
-    auth-signup.ts
   services/
     auth/
-      generateOTPService.ts
-      validateOTPService.ts
     user/
-      userService.ts
+  schemas/
+  libs/
+  routers/
   types/
-    extended-request.ts
   server.ts
 ```
 
-> Nomes podem variar conforme sua organização atual — o conceito é o mesmo.
-
 ---
 
-## ✅ Requisitos
+## Requisitos
 
-- Node.js (recomendado **18+**)
+- Node.js >= 18
 - PostgreSQL
-- Conta no Mailtrap (ou outro provedor de e-mail)
+- Conta no Mailtrap (ou outro provedor SMTP)
 
 ---
 
-## ⚙️ Configuração
+## Configuração
 
-### 1) Clone e instale as dependências
+### 1) Instalar dependências
 
 ```bash
-git clone <seu-repo>
-cd otp-system-backend
 npm install
 ```
 
-### 2) Crie o arquivo `.env`
+### 2) Variáveis de ambiente
 
-Você pode copiar o exemplo:
+Crie um `.env` baseado no `env.example`:
 
 ```bash
 cp env.example .env
 ```
 
-Exemplo de `.env` (ajuste para o seu ambiente):
+Exemplo (ajuste conforme seu ambiente):
 
 ```env
-# Server
 PORT=3000
 
-# Database (Postgres)
 DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/otp_db?schema=public"
 
-# JWT
 JWT_SECRET="sua_chave_super_secreta"
 JWT_EXPIRES_IN="1d"
 
-# Mailtrap (exemplo)
 MAILTRAP_TOKEN="seu_token"
 MAILTRAP_SENDER_EMAIL="no-reply@seudominio.com"
 MAILTRAP_SENDER_NAME="OTP Auth"
 ```
 
-> Se seus nomes de variáveis forem diferentes no projeto, mantenha os que seu código usa.
-
 ---
 
-## 🧱 Prisma / Banco de Dados
-
-### 1) Gerar client e rodar migrations
+## Prisma / Banco
 
 ```bash
 npx prisma generate
 npx prisma migrate dev
 ```
 
-### 2) (Opcional) Abrir Prisma Studio
+Opcional:
 
 ```bash
 npx prisma studio
@@ -133,57 +108,40 @@ npx prisma studio
 
 ---
 
-## ▶️ Rodando o projeto
+## Rodando em desenvolvimento
 
-### Desenvolvimento (recomendado)
-
-Se você usa **tsx**:
+Se você usa `tsx`:
 
 ```bash
 npx tsx src/server.ts
 ```
 
-Se você usa **nodemon**, exemplo:
+Ou, se tiver script `dev`:
 
 ```bash
-npx nodemon
-```
-
-> Depende do seu script no `package.json`. Se quiser, adicione scripts assim:
-
-```json
-{
-  "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "start": "node dist/server.js",
-    "build": "tsc -p tsconfig.json",
-    "prisma:studio": "prisma studio"
-  }
-}
+npm run dev
 ```
 
 ---
 
-## 🔁 Fluxo de autenticação (OTP → JWT)
+## Fluxo de autenticação
 
-1. **Sign In** (usuário informa e-mail)
-2. API gera OTP e envia por e-mail
-3. **Verify OTP** (usuário envia `id` do OTP + `code`)
-4. API retorna `token` JWT
-5. Token é usado no header `Authorization` para rotas privadas
+1. `POST /auth/signin` com e-mail  
+2. A API gera um OTP e envia por e-mail  
+3. `POST /auth/verify` com `id` do OTP e `code`  
+4. A API retorna `{ token, user }`  
+5. Use o token nas rotas privadas via `Authorization: Bearer <token>`
 
 ---
 
-## 📌 Endpoints (exemplo)
+## Endpoints (exemplo)
 
 > Ajuste os paths conforme seus routers.
 
-### Auth
+### Criar usuário
 
-#### `POST /auth/signup`
-Cria um usuário.
+`POST /auth/signup`
 
-**Body**
 ```json
 {
   "name": "Igor",
@@ -191,27 +149,28 @@ Cria um usuário.
 }
 ```
 
-#### `POST /auth/signin`
-Gera e envia OTP para o e-mail.
+### Solicitar OTP
 
-**Body**
+`POST /auth/signin`
+
 ```json
 {
   "email": "igor@email.com"
 }
 ```
 
-**Response**
+Resposta:
+
 ```json
 {
   "id": 1
 }
 ```
 
-#### `POST /auth/verify`
-Valida OTP e retorna JWT.
+### Validar OTP e obter JWT
 
-**Body**
+`POST /auth/verify`
+
 ```json
 {
   "id": 1,
@@ -219,7 +178,8 @@ Valida OTP e retorna JWT.
 }
 ```
 
-**Response**
+Resposta:
+
 ```json
 {
   "token": "seu.jwt.aqui",
@@ -231,19 +191,18 @@ Valida OTP e retorna JWT.
 }
 ```
 
----
+### Rota privada (exemplo)
 
-## 🔒 Rotas privadas
+`GET /private`
 
-### `GET /private`
-Exemplo de rota protegida.
+Header:
 
-**Headers**
 ```
 Authorization: Bearer <TOKEN>
 ```
 
-**Response**
+Resposta:
+
 ```json
 {
   "user": {
@@ -256,33 +215,20 @@ Authorization: Bearer <TOKEN>
 
 ---
 
-## 🛡️ Segurança
+## Testes rápidos (cURL)
 
-- `helmet` adiciona headers de segurança
-- `cors` controla acesso cross-origin
-- OTP com expiração (ex.: 30 min)
-- OTP marcado como `used` após validação
-- JWT assinado com `JWT_SECRET`
-
----
-
-## 🧪 Dicas de teste (cURL)
-
-### Sign in
 ```bash
 curl -X POST http://localhost:3000/auth/signin \
   -H "Content-Type: application/json" \
   -d '{"email":"igor@email.com"}'
 ```
 
-### Verify OTP
 ```bash
 curl -X POST http://localhost:3000/auth/verify \
   -H "Content-Type: application/json" \
   -d '{"id":1,"code":"123456"}'
 ```
 
-### Rota privada
 ```bash
 curl -X GET http://localhost:3000/private \
   -H "Authorization: Bearer SEU_TOKEN_AQUI"
@@ -290,14 +236,10 @@ curl -X GET http://localhost:3000/private \
 
 ---
 
-## 📝 Licença
+## Licença
 
-Este projeto está sob a licença **MIT**.  
-Sinta-se à vontade para usar, estudar e modificar.
+MIT.
 
----
+## Autor
 
-## 👤 Autor
-
-**Igor Medeiros**  
-Se curtiu o projeto, deixa uma ⭐ no repositório!
+Igor Medeiros
