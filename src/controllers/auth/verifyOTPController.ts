@@ -1,7 +1,7 @@
 import { RequestHandler } from "express"
 import { authVerifyOTPSchema } from "../../schemas/auth-otp"
 import { createJWT } from "../../libs/jwt"
-import { validateOTP } from "../../services/auth/validateOtpService"
+import { validateOTP } from "../../services/auth/validateOTPService"
 
 export const verifyOTPController: RequestHandler = async (req, res) => {
   const data = authVerifyOTPSchema.safeParse(req.body)

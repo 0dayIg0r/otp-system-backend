@@ -3,7 +3,7 @@ import { authSignInSchema } from "../../schemas/auth-signin"
 import { getUserByEmail } from "../../services/user/getUserService.ts"
 
 import { sendEmail } from "../../libs/mailtrap"
-import { generateOTP } from "../../services/auth/generateOtpService.ts"
+import { generateOTP } from "../../services/auth/generateOTPService.ts"
 
 export const signIn: RequestHandler = async (req, res) => {
   const data = authSignInSchema.safeParse(req.body)
