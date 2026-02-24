@@ -1,6 +1,8 @@
 import { RequestHandler } from "express"
 import { authSignUpSchema } from "../../schemas/auth-signup"
-import { createUser, getUserByEmail } from "../../services/user/userService"
+import { getUserByEmail } from "../../services/user/getUserByEmailService"
+import { createUser } from "../../services/user/createUserService"
+
 
 export const signUp: RequestHandler = async (req, res) => {
   const data = authSignUpSchema.safeParse(req.body)
